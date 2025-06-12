@@ -55,15 +55,60 @@
     </div>
 
     <script>
-    function generatePDF(depart, arrivee, date) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.text(`Ticket de voyage`, 20, 20);
-        doc.text(`Départ: ${depart}`, 20, 40);
-        doc.text(`Arrivée: ${arrivee}`, 20, 50);
-        doc.text(`Date: ${date}`, 20, 60);
-        doc.save(`ticket-${depart}-${arrivee}.pdf`);
-    }
+            function generatePDF(depart, arrivee, date, nomPassager = "Nom Passager", numeroVol = "EJ1234") {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: [100, 200] // Taille personnalisée pour ressembler à un billet d'avion
+            });
+
+            // Styles globaux
+            doc.setFillColor(230, 240, 255);
+            doc.rect(0, 0, 200, 100, 'F');
+
+            // En-tête
+            doc.setFontSize(18);
+            doc.setTextColor(0, 102, 204);
+            doc.text("ELJO TRAVEL", 10, 15);
+            doc.setFontSize(12);
+            doc.setTextColor(0);
+            doc.text("Billet électronique - Boarding Pass", 10, 22);
+
+            // Trait de séparation
+            doc.setLineWidth(0.3);
+            doc.line(10, 25, 190, 25);
+
+            // Informations principales
+            doc.setFontSize(10);
+            doc.text(`Passager : ${nomPassager}`, 10, 35);
+            doc.text(`N° de vol : ${numeroVol}`, 10, 42);
+            doc.text(`Départ : ${depart}`, 10, 49);
+            doc.text(`Arrivée : ${arrivee}`, 10, 56);
+            doc.text(`Date : ${date}`, 10, 63);
+            doc.text(`Terminal : A`, 10, 70);
+            doc.text(`Porte : B12`, 10, 77);
+            doc.text(`Siège : 14A`, 10, 84);
+
+            // Code de réservation (ex: UUID ou code fixe)
+            const code = `${depart.slice(0, 3).toUpperCase()}-${arrivee.slice(0, 3).toUpperCase()}-${Math.floor(Math.random() * 9000 + 1000)}`;
+            doc.setFontSize(14);
+            doc.setTextColor(50, 50, 50);
+            doc.text(`Code réservation : ${code}`, 110, 35);
+
+            // QR code fictif (ou zone réservée)
+            doc.setDrawColor(0);
+            doc.rect(150, 50, 40, 40); // carré pour QR code
+            doc.setFontSize(8);
+            doc.text("QR Code", 163, 75);
+
+            // Footer
+            doc.setFontSize(7);
+            doc.setTextColor(100);
+            doc.text("Veuillez arriver 2 heures à l'avance. Carte d'identité requise à l'enregistrement.", 10, 95);
+
+            doc.save(`billet-${nomPassager.replace(/\s+/g, "_")}.pdf`);
+        }
     </script>
 
     </body>
